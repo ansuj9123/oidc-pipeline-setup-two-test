@@ -51,11 +51,11 @@ jobs:
               shell: bash
               run: |
                   if [ -z "${{ secrets.AZURE_CLIENT_ID }}" ]; then
-                    echo "ERROR: SANDPIT_AZURE_CLIENT_ID is empty. Check Environment secrets."
+                    echo "ERROR: AZURE_CLIENT_ID is empty. Check Environment secrets."
                     exit 1
                   fi
                   if [ -z "${{ secrets.AZURE_TENANT_ID }}" ]; then
-                    echo "ERROR: SANDPIT_AZURE_TENANT_ID is empty. Check Environment secrets."
+                    echo "ERROR: AZURE_TENANT_ID is empty. Check Environment secrets."
                     exit 1
                   fi
 
