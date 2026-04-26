@@ -44,8 +44,8 @@ jobs:
 
             - name: List files for debugging
               run: |
-                echo "Current directory: $(pwd)"
-                ls -R
+                  echo "Current directory: $(pwd)"
+                  ls -R
 
             - name: Setup Terraform
               uses: hashicorp/setup-terraform@v3
@@ -67,6 +67,14 @@ jobs:
                     echo "ERROR: AZURE_SUBSCRIPTION_ID is empty. Check Environment secrets."
                     exit 1
                   fi
+                  # Diagnostics (Safe because secrets are masked)
+                  echo "Client ID Length: ${#CLIENT_ID}"
+                  echo "Tenant ID Length: ${#TENANT_ID}"
+                  echo "Subscription ID Length: ${#SUBSCRIPTION_ID}"
+              env:
+                  CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+                  TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+                  SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
             - name: Azure Login
               uses: azure/login@v2
@@ -76,8 +84,7 @@ jobs:
                   subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
             - name: Show Azure Account Info
-              run: |
-                az account show
+              run: az account show --output table
 
             - name: Terraform Init
               run: terraform init -backend-config=backend.hcl -input=false
@@ -113,8 +120,8 @@ jobs:
 
             - name: List files for debugging
               run: |
-                echo "Current directory: $(pwd)"
-                ls -R
+                  echo "Current directory: $(pwd)"
+                  ls -R
 
             - name: Setup Terraform
               uses: hashicorp/setup-terraform@v3
