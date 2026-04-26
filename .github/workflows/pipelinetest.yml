@@ -2,9 +2,9 @@ name: sandbox-pipeline
 
 on:
     push:
-        branches: [ "**" ]
+        branches: [ "*" ]
     pull_request:
-        branches: [ "**" ]
+        branches: [ "*" ]
 
 permissions:
     id-token: write
@@ -16,7 +16,7 @@ concurrency:
 
 env:
     ARM_USE_OIDC: true
-    TF_VERSION: 1.9.0
+    TF_VERSION: 1.12.2
     ARM_USE_AZUREAD: true
     TF_IN_AUTOMATION: true
 
@@ -36,10 +36,19 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
 
-            - name: List files for debugging
+            - name: Check for Terraform Files
               run: |
-                  echo "Current directory: $(pwd)"
-                  ls -R
+                  echo "Checking directory: $(pwd)"
+                  if [ -z "$(ls -A *.tf 2>/dev/null)" ]; then
+                    echo "ERROR: No .tf files found in $(pwd)!"
+                    echo "Ensure you have moved your Terraform configuration to this directory."
+                    ls -la
+                    exit 1
+                  fi
+                  if [ ! -f "backend.hcl" ]; then
+                    echo "ERROR: backend.hcl not found in $(pwd)!"
+                    exit 1
+                  fi
 
             - name: Setup Terraform
               uses: hashicorp/setup-terraform@v3
