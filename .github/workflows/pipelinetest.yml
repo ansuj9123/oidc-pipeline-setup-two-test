@@ -42,6 +42,11 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v4
 
+            - name: List files for debugging
+              run: |
+                echo "Current directory: $(pwd)"
+                ls -R
+
             - name: Setup Terraform
               uses: hashicorp/setup-terraform@v3
               with:
@@ -97,6 +102,11 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+
+            - name: List files for debugging
+              run: |
+                echo "Current directory: $(pwd)"
+                ls -R
 
             - name: Setup Terraform
               uses: hashicorp/setup-terraform@v3
