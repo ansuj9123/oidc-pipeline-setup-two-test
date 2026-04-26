@@ -3,14 +3,8 @@ name: sandbox-pipeline
 on:
     push:
         branches: [ "**" ]
-        paths:
-            - "environments/**"
-            - ".github/workflows/**"
     pull_request:
         branches: [ "**" ]
-        paths:
-            - "environments/**"
-            - ".github/workflows/**"
 
 permissions:
     id-token: write
