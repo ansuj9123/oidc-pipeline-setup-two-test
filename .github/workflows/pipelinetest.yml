@@ -1,4 +1,4 @@
-name: main-pipeline
+name: sandbox-pipeline
 
 on:
     push:
@@ -17,7 +17,7 @@ permissions:
     contents: read
 
 concurrency:
-    group: terraform-main
+    group: terraform-sandbox
     cancel-in-progress: false
 
 env:
@@ -29,10 +29,10 @@ env:
 jobs:
     plan:
         runs-on: ubuntu-latest
-        environment: main
+        environment: sandbox
         defaults:
             run:
-                working-directory: environments/main
+                working-directory: environments/sandbox
         env:
             ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
             ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
@@ -78,17 +78,17 @@ jobs:
             - name: Upload plan artifact
               uses: actions/upload-artifact@v4
               with:
-                  name: tfplan-main
-                  path: environments/main/tfplan
+                  name: tfplan-sandbox
+                  path: environments/sandbox/tfplan
 
     apply:
         needs: plan
         if: github.event_name == 'push'
         runs-on: ubuntu-latest
-        environment: main
+        environment: sandbox
         defaults:
             run:
-                working-directory: environments/main
+                working-directory: environments/sandbox
         env:
             ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
             ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
@@ -113,8 +113,8 @@ jobs:
             - name: Download plan artifact
               uses: actions/download-artifact@v4
               with:
-                  name: tfplan-main
-                  path: environments/main
+                  name: tfplan-sandbox
+                  path: environments/sandbox
 
             - name: Terraform Init
               run: terraform init -backend-config=backend.hcl -input=false
