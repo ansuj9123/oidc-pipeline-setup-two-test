@@ -47,12 +47,24 @@ jobs:
               with:
                   terraform_version: ${{ env.TF_VERSION }}
 
+            - name: Verify Secret Availability
+              shell: bash
+              run: |
+                  if [ -z "${{ secrets.SANDPIT_AZURE_CLIENT_ID }}" ]; then
+                    echo "ERROR: SANDPIT_AZURE_CLIENT_ID is empty. Check Environment secrets."
+                    exit 1
+                  fi
+                  if [ -z "${{ secrets.SANDPIT_AZURE_TENANT_ID }}" ]; then
+                    echo "ERROR: SANDPIT_AZURE_TENANT_ID is empty. Check Environment secrets."
+                    exit 1
+                  fi
+
             - name: Azure Login
               uses: azure/login@v2
               with:
-                  client-id: ${{ env.ARM_CLIENT_ID }}
-                  tenant-id: ${{ env.ARM_TENANT_ID }}
-                  subscription-id: ${{ env.ARM_SUBSCRIPTION_ID }}
+                  client-id: ${{ secrets.SANDPIT_AZURE_CLIENT_ID }}
+                  tenant-id: ${{ secrets.SANDPIT_AZURE_TENANT_ID }}
+                  subscription-id: ${{ secrets.SANDPIT_AZURE_SUBSCRIPTION_ID }}
 
             - name: Terraform Init
               run: terraform init -backend-config=backend.hcl -input=false
@@ -94,9 +106,9 @@ jobs:
             - name: Azure Login
               uses: azure/login@v2
               with:
-                  client-id: ${{ env.ARM_CLIENT_ID }}
-                  tenant-id: ${{ env.ARM_TENANT_ID }}
-                  subscription-id: ${{ env.ARM_SUBSCRIPTION_ID }}
+                  client-id: ${{ secrets.SANDPIT_AZURE_CLIENT_ID }}
+                  tenant-id: ${{ secrets.SANDPIT_AZURE_TENANT_ID }}
+                  subscription-id: ${{ secrets.SANDPIT_AZURE_SUBSCRIPTION_ID }}
 
             - name: Download plan artifact
               uses: actions/download-artifact@v4
