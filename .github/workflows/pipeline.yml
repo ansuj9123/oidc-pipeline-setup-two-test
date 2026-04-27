@@ -1,0 +1,31 @@
+name: Azure CI/CD Pipeline
+
+on:
+    push:
+        branches:
+            - "**" # Trigger on push to any branch
+
+permissions:
+    id-token: write # Required for requesting the JWT
+    contents: read # Required for actions/checkout
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        environment: sandbox # Must match the environment name in your OIDC trust
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v4
+
+            - name: Azure Login via OIDC
+              uses: azure/login@v2
+              with:
+                  client-id: ${{ secrets.SANDBOX_AZURE_CLIENT_ID }}
+                  tenant-id: ${{ secrets.SANDBOX_AZURE_TENANT_ID }}
+                  subscription-id: ${{ secrets.SANDBOX_AZURE_SUBSCRIPTION_ID }}
+
+            - name: Run Azure CLI commands
+              run: |
+                  az account show
+                  # Add your deployment or resource management commands here
