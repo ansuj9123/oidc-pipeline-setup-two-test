@@ -9,11 +9,20 @@ permissions:
     id-token: write # Required for requesting the JWT
     contents: read # Required for actions/checkout
 
+env:
+    ARM_CLIENT_ID: ${{ secrets.SANDBOX_AZURE_CLIENT_ID }}
+    ARM_SUBSCRIPTION_ID: ${{ secrets.SANDBOX_AZURE_SUBSCRIPTION_ID }}
+    ARM_TENANT_ID: ${{ secrets.SANDBOX_AZURE_TENANT_ID }}
+    ARM_USE_OIDC: true
+
 jobs:
     plan:
         name: "Plan Changes"
         runs-on: ubuntu-latest
         environment: sandbox
+        defaults:
+            run:
+                working-directory: ./environments/sandbox
 
         steps:
             - name: Checkout Code
@@ -26,18 +35,24 @@ jobs:
                   tenant-id: ${{ secrets.SANDBOX_AZURE_TENANT_ID }}
                   subscription-id: ${{ secrets.SANDBOX_AZURE_SUBSCRIPTION_ID }}
 
-            - name: Run Validation (Plan)
+            - name: Setup Terraform
+              uses: hashicorp/setup-terraform@v3
+
+            - name: Terraform Init
+              run: terraform init
+
+            - name: Terraform Plan
               run: |
-                  echo "Running deployment validation..."
-                  # Example: Validating an ARM or Bicep deployment
-                  # az deployment group validate --resource-group myRG --template-file main.bicep
-                  az account show
+                  terraform plan -out=tfplan
 
     apply:
         name: "Apply Changes"
         needs: [ plan ] # Only run if the plan job succeeds
         runs-on: ubuntu-latest
         environment: sandbox
+        defaults:
+            run:
+                working-directory: ./environments/sandbox
 
         steps:
             - name: Checkout Code
@@ -50,7 +65,12 @@ jobs:
                   tenant-id: ${{ secrets.SANDBOX_AZURE_TENANT_ID }}
                   subscription-id: ${{ secrets.SANDBOX_AZURE_SUBSCRIPTION_ID }}
 
-            - name: Execute Deployment (Apply)
+            - name: Setup Terraform
+              uses: hashicorp/setup-terraform@v3
+
+            - name: Terraform Init
+              run: terraform init
+
+            - name: Terraform Apply
               run: |
-                  echo "Deploying to Azure..."
-                  # az deployment group create --resource-group myRG --template-file main.bicep
+                  terraform apply -auto-approve
