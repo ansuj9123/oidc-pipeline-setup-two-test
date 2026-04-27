@@ -19,7 +19,8 @@ resource "azurerm_service_plan" "plan" {
   resource_group_name = var.resource_group_name
 
   os_type  = "Linux"
-  sku_name = "Y1" # Consumption
+  sku_name = "B1" # Basic plan to avoid Y1 quota issues
+  tier     = "Basic"
 }
 
 resource "azurerm_linux_function_app" "func" {

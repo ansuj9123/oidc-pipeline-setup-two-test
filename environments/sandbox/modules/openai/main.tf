@@ -5,6 +5,7 @@ resource "azurerm_cognitive_account" "openai" {
 
   kind     = "OpenAI"
   sku_name = "S0"
+  restore_with_account_name = true # Attempt to restore if soft-deleted
 }
 
 resource "azurerm_cognitive_deployment" "model" {
