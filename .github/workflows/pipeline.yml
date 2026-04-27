@@ -22,7 +22,7 @@ jobs:
         environment: sandbox
         defaults:
             run:
-                working-directory: ./environments/sandbox
+                working-directory: ./environments/sandbox/ai-devops-terraform
 
         steps:
             - name: Checkout Code
@@ -52,7 +52,7 @@ jobs:
         environment: sandbox
         defaults:
             run:
-                working-directory: ./environments/sandbox
+                working-directory: ./environments/sandbox/ai-devops-terraform
 
         steps:
             - name: Checkout Code
