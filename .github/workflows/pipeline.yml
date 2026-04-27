@@ -10,22 +10,47 @@ permissions:
     contents: read # Required for actions/checkout
 
 jobs:
-    deploy:
+    plan:
+        name: "Plan Changes"
         runs-on: ubuntu-latest
-        environment: sandbox # Must match the environment name in your OIDC trust
+        environment: sandbox
 
         steps:
             - name: Checkout Code
               uses: actions/checkout@v4
 
-            - name: Azure Login via OIDC
+            - name: Azure Login
               uses: azure/login@v2
               with:
                   client-id: ${{ secrets.SANDBOX_AZURE_CLIENT_ID }}
                   tenant-id: ${{ secrets.SANDBOX_AZURE_TENANT_ID }}
                   subscription-id: ${{ secrets.SANDBOX_AZURE_SUBSCRIPTION_ID }}
 
-            - name: Run Azure CLI commands
+            - name: Run Validation (Plan)
               run: |
+                  echo "Running deployment validation..."
+                  # Example: Validating an ARM or Bicep deployment
+                  # az deployment group validate --resource-group myRG --template-file main.bicep
                   az account show
-                  # Add your deployment or resource management commands here
+
+    apply:
+        name: "Apply Changes"
+        needs: [ plan ] # Only run if the plan job succeeds
+        runs-on: ubuntu-latest
+        environment: sandbox
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v4
+
+            - name: Azure Login
+              uses: azure/login@v2
+              with:
+                  client-id: ${{ secrets.SANDBOX_AZURE_CLIENT_ID }}
+                  tenant-id: ${{ secrets.SANDBOX_AZURE_TENANT_ID }}
+                  subscription-id: ${{ secrets.SANDBOX_AZURE_SUBSCRIPTION_ID }}
+
+            - name: Execute Deployment (Apply)
+              run: |
+                  echo "Deploying to Azure..."
+                  # az deployment group create --resource-group myRG --template-file main.bicep
