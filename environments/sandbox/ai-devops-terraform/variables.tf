@@ -1,5 +1,5 @@
 variable "location" {
-  default = "canadacentral"
+  default = "eastus2"
 }
 
 variable "resource_group_name" {
@@ -7,5 +7,5 @@ variable "resource_group_name" {
 }
 
 variable "project_name" {
-  default = "aidevops01"
+  default = "aidevops-v2"
 }
