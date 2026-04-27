@@ -41,7 +41,7 @@ resource "azurerm_linux_function_app" "func" {
   }
 
   app_settings = {
-    "APPINSIGHTS_INSTRUMENTATIONKEY" = azurerm_application_insights.appi.instrumentation_key
+    "APPLICATIONINSIGHTS_CONNECTION_STRING" = azurerm_application_insights.appi.connection_string
     "OPENAI_ENDPOINT"                = var.openai_endpoint
   }
 }
