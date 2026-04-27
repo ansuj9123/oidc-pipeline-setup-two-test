@@ -20,7 +20,6 @@ resource "azurerm_service_plan" "plan" {
 
   os_type  = "Linux"
   sku_name = "B1" # Basic plan to avoid Y1 quota issues
-  tier     = "Basic"
 }
 
 resource "azurerm_linux_function_app" "func" {
